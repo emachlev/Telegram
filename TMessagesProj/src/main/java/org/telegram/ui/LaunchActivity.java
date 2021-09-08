@@ -2234,6 +2234,30 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                 }
                 pushOpened = false;
             } else if (exportingChatUri != null) {
+                if (documentsUrisArray.size() == 1) {
+                    Uri uri = documentsUrisArray.get(0);
+                    String[] split = uri.getPath().split("\\.");
+                    String extension = split[split.length-1];
+                    if (extension.equals("g2bmedia")) {
+                        documentsUrisArray.clear();
+                        InputStream inputStream = null;
+                        try {
+                            inputStream = getContentResolver().openInputStream(uri);
+                            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+                            for (String line; (line = r.readLine()) != null;) {
+                                documentsUrisArray.add(Uri.parse(line));
+                            }
+                        } catch (Exception e) {
+                            FileLog.e(e);
+                        } finally {
+                            try {
+                                inputStream.close();
+                            } catch (Exception e2) {
+                                FileLog.e(e2);
+                            }
+                        }
+                    }
+                }
                 runImportRequest(exportingChatUri, documentsUrisArray);
             } else if (importingStickers != null) {
                 AndroidUtilities.runOnUIThread(() -> {
