@@ -96,8 +96,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 
-import androidx.core.content.FileProvider;
-
 public class MediaController implements AudioManager.OnAudioFocusChangeListener, NotificationCenter.NotificationCenterDelegate, SensorEventListener {
 
     private native int startRecord(String path, int sampleRate);
@@ -4174,9 +4172,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
             if (AndroidUtilities.isInternalUri(Uri.fromFile(f))) {
                 return null;
             }
-            File mediaFile = new File(uri.getPath());
-            Uri grantedUri = FileProvider.getUriForFile(ApplicationLoader.applicationContext, uri.getAuthority(), mediaFile);
-            inputStream = ApplicationLoader.applicationContext.getContentResolver().openInputStream(grantedUri);
+            inputStream = ApplicationLoader.applicationContext.getContentResolver().openInputStream(uri);
             if (inputStream instanceof FileInputStream) {
                 FileInputStream fileInputStream = (FileInputStream) inputStream;
                 try {
